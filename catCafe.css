@@ -1,0 +1,25 @@
+.main-title {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+.title-text {
+    text-align: center;
+}
+
+.breadcrumb {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.breadcrumb-item {
+    font-size: 19px;
+}
+
+.card {
+    display: block;
+    margin-right: auto;
+    margin-left: auto
+}
