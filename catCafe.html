@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="catCafe.css">
+    <link href="https://fonts.googleapis.com/css?family=Jua&display=swap" rel="stylesheet">
 
     <title>집사의 민족</title>
 </head>
 
 <body>
-    <h1 class="main-title">집사의 민족</h1>
-    <p class="title-text"> 서울시 모든 고양이 카페 정보를 한눈에!</p>
+    <div class="title-wrap">
+        <div class="text-wrap">
+            <h1 class="main-title text-border">집사의 민족</h1>
+            <p class="title-text text-border"> 서울시 모든 고양이 카페 정보를 한눈에!</p>
+        </div>
+    </div>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item active GangNam" aria-current="page">강남구</li>
@@ -52,12 +57,12 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">고양이카페 이름</h5>
-                    <p class="card-text">가격</p>
-                    <p class="card-text">주소</p>
-                    <p class="card-text">블로그 리뷰수</p>
-                    <p class="card-text">블로그 둘러보기</p>
-                    <p class="card-text">평점</p>
-                    <p class="card-text">평점주기</p>
+                    <p class="card-price">입장료</p>
+                    <p class="card-adress">주소</p>
+                    <p class="card-reviewCount">블로그 리뷰수</ps>
+                        <p class="card-review">블로그 둘러보기</p>
+                        <p class="card-point">평점</p>
+                        <p class="card-givePoint">평점주기</p>
                 </div>
             </div>
         </div>
@@ -81,7 +86,9 @@
         function listing() {
             console.log('화면 로딩 후 잘 실행되었습니다');
         }
+
     </script>
+    <script src='bg.js'></script>
 </body>
 
 </html>
