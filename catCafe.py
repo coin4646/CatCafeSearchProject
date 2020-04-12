@@ -1,21 +1,25 @@
-import requests
-from bs4 import BeautifulSoup
-
 from pymongo import MongoClient
+
+from flask import Flask, render_template, jsonify, request
+app = Flask(__name__)
 
 client = MongoClient('localhost', 27017)
 db = client.dbsparta
 
-def get_urls():
-    headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-    data = requests.get('https://store.naver.com/attractions/list?display=9&query=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EA%B3%A0%EC%96%91%EC%9D%B4%EC%B9%B4%ED%8E%98&sessionid=SmpfOJ6KFU2yHptSuPAu0Pss&sortingOrder=precision&start=1',headers=headers)
+# HTML을 주는 부분
+@app.route('/')
+def home():
+    return render_template('catCafe.html')
+
+# API 역할을 하는 부분
+@app.route('/api/list', methods=['GET'])
+def cafes_list():
+    # 1. mystar 목록 전체를 검색합니다. ID는 제외하고 like 가 많은 순으로 정렬합니다.
+    # 참고) find({},{'_id':False}), sort()를 활용하면 굿!
+    # 2. 성공하면 success 메시지와 함께 stars_list 목록을 클라이언트에 전달합니다.
+    cafes = list(db.GangNam.find({},{'_id':False}))
+    return jsonify({'result': 'success','cafes_list': cafes})
 
 
-    soup = BeautifulSoup(data.text, 'html.parser')
-
-    cafes = soup.select('#container > div.placemap_area > div.list_wrapper > div > div.list_area > ul > li')
-
-    for cafe in cafes:
-        title = cafe.select_one('div > div > div.tit > span > a > span').text
-
-        print(title)
+if __name__ == '__main__':
+    app.run('0.0.0.0', port=5000, debug=True)

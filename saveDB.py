@@ -6,56 +6,34 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbsparta
 
-# DB에 저장할 영화인들의 출처 url을 가져옵니다.
-def get_urls():
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-    data = requests.get('https://store.naver.com/attractions/list?display=9&query=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EA%B3%A0%EC%96%91%EC%9D%B4%EC%B9%B4%ED%8E%98&sessionid=SmpfOJ6KFU2yHptSuPAu0Pss&sortingOrder=precision&start=1', headers=headers)
+def get_GangNam():
+    headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+    data = requests.get('https://store.naver.com/sogum/api/businesses?start=1&display=110&query=%EA%B0%95%EB%82%A8%EA%B5%AC%20%EA%B3%A0%EC%96%91%EC%9D%B4%EC%B9%B4%ED%8E%98&deviceType=pc',headers=headers)
 
-    soup = BeautifulSoup(data.text, 'html.parser')
+    json = data.json()
+    cafes = json['items']
+    basic_url = 'https://store.naver.com/attractions/detail?id='
+    basic_map_url = 'https://map.naver.com/v5/entry/place/'
+    for cafe in cafes:
+        url = basic_url + cafe['id']
+        map_url = basic_map_url + cafe['id']
+        address = cafe['roadAddr']
+        name = cafe['name']
+        price = cafe['desc']
+        image = cafe['imageSrc']
+        blogNum = cafe['blogCafeReviewCount']
 
-    trs = soup.select('#old_content > table > tbody > tr')
+        doc = {
+            'url' : url,
+            'name' : name,
+            'price' : price,
+            'image' : image,
+            'blogNum' : blogNum,
+            'mapUrl' : map_url,
+            'address' : address
+        }
 
-    urls = []
-    for tr in trs:
-        a = tr.select_one('td.title > a')
-        if a is not None:
-            baseurl = 'https://movie.naver.com/'
-            url = baseurl + a['href']
-            urls.append(url)
+        db.GangNam.insert_one(doc)
+        print('완료!', name)
 
-    return urls
-
-# 출처 url로부터 영화인들의 사진, 이름, 최근작 정보를 가져오고 mystar 콜렉션에 저장합니다.
-def insert_star(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-    data = requests.get(url, headers=headers)
-
-    soup = BeautifulSoup(data.text, 'html.parser')
-
-    name = soup.select_one('#content > div.article > div.mv_info_area > div.mv_info.character > h3 > a').text
-    img_url = soup.select_one('#content > div.article > div.mv_info_area > div.poster > img')['src']
-    recent = soup.select_one(
-        '#content > div.article > div.mv_info_area > div.mv_info.character > dl > dd > a:nth-child(1)').text
-
-    doc = {
-        'name': name,
-        'img_url': img_url,
-        'recent': recent,
-        'url': url,
-        'like': 0
-    }
-
-    db.mystar.insert_one(doc)
-    print('완료!', name)
-
-# 기존 mystar 콜렉션을 삭제하고, 출처 url들을 가져온 후, 크롤링하여 DB에 저장합니다.
-def insert_all():
-    db.mystar.drop()  # mystar 콜렉션을 모두 지워줍니다.
-    urls = get_urls()
-    for url in urls:
-        insert_star(url)
-
-
-### 실행하기
-insert_all()
+get_GangNam()
